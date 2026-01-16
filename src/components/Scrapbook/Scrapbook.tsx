@@ -4,7 +4,7 @@ import { getAllScrapItems, deleteScrapItem, updateScrapItem } from '../../lib/db
 import { ScrapBlock } from './ScrapBlock';
 import { copyToClipboard, exportToPdf } from '../../utils/export';
 import { ScrapHighlightModal } from './ScrapHighlightModal';
-import { GoogleDriveService } from '../../lib/googleDrive';
+// import { GoogleDriveService } from '../../lib/googleDrive'; // Removed unused import to fix build
 import { flattenImage, dataUrlToBlob } from '../../utils/imageUtils'; // Import util
 import './Scrapbook.css';
 import './Footer.css';
