@@ -1,11 +1,16 @@
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-// import { getAllScrapItems } from '../lib/db';
+import { flattenImage } from './imageUtils';
 
 export const copyToClipboard = async (items: any[]) => {
-    // const items = await getAllScrapItems(); // usage via arg
-    // items.sort((a, b) => a.order - b.order); // Assume sorted or sort here if needed, but UI passed sorted items.
-
+    // ... same as before
+    // (omitted for brevity in prompt, but need to be careful with replace)
+    // Actually, I can leave copyToClipboard alone if I target exportToPdf specifically.
+    // But `replace_file_content` needs exact match.
+    // I will replace the whole file content for safety or target the specific function
+    // But wait, allow me to use "replace" on exportToPdf part only.
+    // But wait, imports need to change too.
+    // ... existing copyToClipboard implementation ...
     let htmlContent = '';
     items.forEach(item => {
         htmlContent += '<div style="margin-bottom: 20px;">';
@@ -24,7 +29,7 @@ export const copyToClipboard = async (items: any[]) => {
         }
         htmlContent += '</div>';
     });
-
+    // ...
     try {
         const type = "text/html";
         const blob = new Blob([htmlContent], { type });
@@ -59,9 +64,9 @@ export const exportToPdf = async (items: any[]) => {
         const doc = new jsPDF('p', 'mm', 'a4'); // Portrait, Millimeters, A4
         const chunks = [];
 
-        // Split items into chunks of 4 for 2x2 grid
-        for (let i = 0; i < items.length; i += 4) {
-            chunks.push(items.slice(i, i + 4));
+        // Split items into chunks of 2 for 1x2 grid (Top/Bottom)
+        for (let i = 0; i < items.length; i += 2) {
+            chunks.push(items.slice(i, i + 2));
         }
 
         // Helper to escape HTML to prevent XSS (basic)
@@ -74,11 +79,11 @@ export const exportToPdf = async (items: any[]) => {
         for (let i = 0; i < chunks.length; i++) {
             const chunk = chunks[i];
 
-            // Build Inner HTML for this Page (2x2 Grid)
+            // Build Inner HTML for this Page (1x2 Grid)
             let html = `
                 <div style="
                     display: grid; 
-                    grid-template-columns: 1fr 1fr; 
+                    grid-template-columns: 1fr; 
                     grid-template-rows: 1fr 1fr; 
                     width: 100%; 
                     height: 100%; 
@@ -88,14 +93,23 @@ export const exportToPdf = async (items: any[]) => {
                 ">
             `;
 
-            chunk.forEach(item => {
+            // Prepare items (flatten images concurrently if needed)
+            const processedChunk = await Promise.all(chunk.map(async (item) => {
+                if (item.type === 'image' && item.content.startsWith('data:image') && item.meta?.highlights?.length > 0) {
+                    const flattened = await flattenImage(item.content, item.meta.highlights);
+                    return { ...item, content: flattened };
+                }
+                return item;
+            }));
+
+            processedChunk.forEach(item => {
                 html += `
                     <div style="
                         display: flex; 
                         flex-direction: column; 
                         overflow: hidden; 
                         border: 1px solid #eee; 
-                        padding: 15px; 
+                        padding: 20px; 
                         border-radius: 8px;
                         background: #fdfdfd;
                     ">
@@ -104,31 +118,31 @@ export const exportToPdf = async (items: any[]) => {
                 if (item.type === 'heading') {
                     html += `<h2 style="font-size: 18px; font-weight: bold; margin: 0 0 10px 0;">${escapeHtml(item.content)}</h2>`;
                 } else if (item.type === 'image') {
-                    // Image Container
+                    // Image Container - Larger max-height for 1x2
                     html += `
                         <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 10px; background: #fafafa; border: 1px solid #f0f0f0;">
-                             <img src="${item.content}" style="max-width: 100%; max-height: 250px; object-fit: contain;" />
+                             <img src="${item.content}" style="max-width: 100%; max-height: 400px; object-fit: contain;" />
                         </div>
                     `;
 
-                    // Metadata (Source) - Reduced font size
+                    // Metadata (Source)
                     if (item.meta?.citation) {
                         html += `<div style="font-size: 10px; color: #666; margin-bottom: 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${escapeHtml(item.meta.citation)}</div>`;
                     }
 
                     // Comment
                     if (item.comment) {
-                        html += `<div style="font-size: 12px; color: #333; line-height: 1.4; flex-shrink: 0;">${escapeHtml(item.comment)}</div>`;
+                        html += `<div style="font-size: 14px; color: #333; line-height: 1.5; flex-shrink: 0;">${escapeHtml(item.comment)}</div>`;
                     }
                 } else if (item.type === 'text') {
-                    html += `<div style="font-size: 12px; color: #333; white-space: pre-wrap;">${escapeHtml(item.content)}</div>`;
+                    html += `<div style="font-size: 14px; color: #333; white-space: pre-wrap;">${escapeHtml(item.content)}</div>`;
                 }
 
                 html += `</div>`; // End item container
             });
 
-            // Fill empty slots if chunk has less than 4 items
-            for (let j = chunk.length; j < 4; j++) {
+            // Fill empty slot
+            for (let j = processedChunk.length; j < 2; j++) {
                 html += `<div></div>`;
             }
 
@@ -162,18 +176,11 @@ export const exportToPdf = async (items: any[]) => {
             doc.addImage(imgData, 'JPEG', 0, 0, 210, 297);
         }
 
-        // doc.save('MyScrapbook_Grid.pdf');
+        doc.save('MyScrapbook_Grid.pdf');
 
-        // Manual Blob Download to ensure filename
-        const blob = doc.output('blob');
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'MyScrapbook_Grid.pdf';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
+        // Manual Blob Download removed to fix filename issue
+        // const blob = doc.output('blob');
+        // ...
 
     } catch (e) {
         console.error("PDF Export failed", e);

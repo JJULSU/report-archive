@@ -70,6 +70,38 @@ export function SelectionOverlay({ onSelectionComplete }: SelectionOverlayProps)
         setCurrentPos(null);
     };
 
+    // Touch Handling (iPad Support)
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (!overlayRef.current || e.touches.length === 0) return;
+        // e.preventDefault(); // Might block scrolling, be careful. 
+        // For overlay, we usually want to block scrolling while selecting.
+
+        const touch = e.touches[0];
+        const rect = overlayRef.current.getBoundingClientRect();
+        setStartPos({
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        });
+        setCurrentPos({
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        });
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (!startPos || !overlayRef.current || e.touches.length === 0) return;
+        const touch = e.touches[0];
+        const rect = overlayRef.current.getBoundingClientRect();
+        setCurrentPos({
+            x: touch.clientX - rect.left,
+            y: touch.clientY - rect.top
+        });
+    };
+
+    const handleTouchEnd = () => {
+        handleMouseUp(); // Output logic is same
+    };
+
     const getSelectionStyle = () => {
         if (!startPos || !currentPos) return {};
         const left = Math.min(startPos.x, currentPos.x);
@@ -94,6 +126,9 @@ export function SelectionOverlay({ onSelectionComplete }: SelectionOverlayProps)
                     setCurrentPos(null);
                 }
             }}
+            onTouchStart={handleTouchStart}
+            onTouchMove={handleTouchMove}
+            onTouchEnd={handleTouchEnd}
         >
             {startPos && currentPos && (
                 <div className="selection-box" style={getSelectionStyle()} />

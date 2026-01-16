@@ -4,8 +4,11 @@ import { getAllScrapItems, deleteScrapItem, updateScrapItem } from '../../lib/db
 import { ScrapBlock } from './ScrapBlock';
 import { copyToClipboard, exportToPdf } from '../../utils/export';
 import { ScrapHighlightModal } from './ScrapHighlightModal';
+import { GoogleDriveService } from '../../lib/googleDrive';
+import { flattenImage, dataUrlToBlob } from '../../utils/imageUtils'; // Import util
 import './Scrapbook.css';
 import './Footer.css';
+
 export function Scrapbook() {
     const [items, setItems] = useState<any[]>([]);
     const [editingItem, setEditingItem] = useState<any>(null);
@@ -36,13 +39,9 @@ export function Scrapbook() {
 
     const displayItems = useMemo(() => {
         if (viewMode === 'current') return currentItems;
-        // In archive mode, if a tag is selected, show items with that tag
         if (selectedTag) {
             return archivedItems.filter(i => i.tags?.includes(selectedTag));
         }
-        // If no tag selected in archive mode, show all archived? Or show folder list?
-        // Requirement: "Folder ... to see images by tag".
-        // Let's return all archived items if no tag selected, but the UI will show folders if no tag selected.
         return archivedItems;
     }, [viewMode, currentItems, archivedItems, selectedTag]);
 
@@ -95,9 +94,14 @@ export function Scrapbook() {
 
                 // Save Image (if image)
                 if (item.type === 'image' && item.content.startsWith('data:image')) {
-                    // Convert Base64 to Blob
-                    const res = await fetch(item.content);
-                    const blob = await res.blob();
+                    // Flatten highlights if they exist
+                    let finalContent = item.content;
+                    if (item.meta && item.meta.highlights && item.meta.highlights.length > 0) {
+                        finalContent = await flattenImage(item.content, item.meta.highlights);
+                    }
+
+                    // Convert Base64/DataURL to Blob
+                    const blob = await dataUrlToBlob(finalContent);
                     const filename = `scrap-${item.createdAt}.png`;
 
                     // @ts-ignore
@@ -137,6 +141,8 @@ export function Scrapbook() {
         }
     };
 
+    // Drive save removed per user request
+
     const handleRefresh = async () => {
         if (currentItems.length === 0) return;
         if (!window.confirm(`Delete ALL ${currentItems.length} items from current view? This cannot be undone.`)) return;
@@ -153,7 +159,7 @@ export function Scrapbook() {
             try {
                 await deleteScrapItem(id);
                 console.log('Scrap deleted from DB');
-                await loadItems(); // Ensure await
+                await loadItems();
                 console.log('Items reloaded');
             } catch (err) {
                 console.error('Delete failed:', err);
@@ -263,7 +269,7 @@ export function Scrapbook() {
                 </button>
             </div>
 
-            {/* Highlight Modal (Unchanged props) */}
+            {/* Highlight Modal */}
             {editingItem && (
                 <ScrapHighlightModal
                     imageUrl={editingItem.content}
