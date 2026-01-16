@@ -1,0 +1,140 @@
+.workspace-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f0f0f0;
+}
+
+.workspace-content {
+    flex: 1;
+    display: flex;
+    overflow: hidden;
+    /* Inner scroll handling */
+    background-color: #e9ecef;
+    position: relative;
+}
+
+.pdf-scroll-container {
+    flex: 1;
+    overflow: auto;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+    gap: 20px;
+    position: relative;
+    /* For Overlay */
+}
+
+.pdf-scroll-container.double-view {
+    flex-direction: row;
+    align-items: flex-start;
+}
+
+.workspace-empty {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+    gap: 1rem;
+}
+
+.toolbar {
+    height: 50px;
+    background-color: #fff;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    padding: 0 1rem;
+    gap: 1rem;
+    justify-content: center;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.tool-btn {
+    padding: 6px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Ensure Annotation/Text Layer positioning */
+.annotationLayer,
+.textLayer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    /* Let clicks pass unless on a link */
+    overflow: hidden;
+    line-height: 1.0;
+}
+
+.textLayer {
+    opacity: 0.2;
+    /* Make text invisible but selectable? Or transparent color? */
+    /* pdf.js text helper styles usually: */
+    pointer-events: auto !important;
+    /* Allow selection */
+}
+
+/* Hide text color but keep selection */
+.textLayer>span {
+    color: transparent;
+    position: absolute;
+    white-space: pre;
+    cursor: text;
+    transform-origin: 0% 0%;
+}
+
+.annotationLayer .linkAnnotation>a {
+    pointer-events: auto;
+    /* Visual debug if needed: border: 1px solid red; */
+}
+
+
+.tool-btn:hover:not(:disabled) {
+    background-color: #f1f3f5;
+    color: var(--text-primary);
+}
+
+.tool-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.page-info,
+.zoom-info {
+    font-size: 0.9rem;
+    font-variant-numeric: tabular-nums;
+    min-width: 3rem;
+    text-align: center;
+}
+
+.toolbar-divider {
+    width: 1px;
+    height: 20px;
+    background-color: var(--border-color);
+    margin: 0 0.5rem;
+}
+
+.viewer-placeholder {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: var(--text-secondary);
+}

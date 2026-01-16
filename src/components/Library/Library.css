@@ -1,0 +1,153 @@
+/* Library.css */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.spinning {
+    animation: spin 1s linear infinite;
+}
+
+.library-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.library-header {
+    padding: 1rem;
+    font-weight: 600;
+    border-bottom: 1px solid var(--border-color);
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.file-uploader {
+    margin: 1rem;
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    cursor: pointer;
+    background-color: #fafafa;
+}
+
+.file-uploader:hover,
+.file-uploader.drag-over {
+    border-color: var(--primary-color);
+    background-color: #f0f7ff;
+    color: var(--primary-color);
+}
+
+.file-uploader .sub-text {
+    font-size: 0.8rem;
+    margin-top: 0.5rem;
+    opacity: 0.7;
+}
+
+.upload-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.animate-spin {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.file-list {
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 1rem 1rem 1rem;
+}
+
+.file-item {
+    display: flex;
+    align-items: center;
+    padding: 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    margin-bottom: 0.25rem;
+    gap: 0.75rem;
+}
+
+.file-item:hover {
+    background-color: #f1f3f5;
+}
+
+.file-item.active {
+    background-color: #e7f5ff;
+    color: var(--primary-color);
+}
+
+.file-icon {
+    flex-shrink: 0;
+    color: var(--text-secondary);
+}
+
+.file-info {
+    flex: 1;
+    overflow: hidden;
+}
+
+.file-name {
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: block;
+}
+
+.file-date {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+}
+
+.file-actions {
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.file-item:hover .file-actions {
+    opacity: 1;
+}
+
+.action-btn {
+    padding: 4px;
+    border-radius: 4px;
+    color: var(--text-secondary);
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto;
+    cursor: pointer;
+}
+
+.action-btn:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+    color: #dc3545;
+}

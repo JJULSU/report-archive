@@ -1,0 +1,401 @@
+.scrapbook-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    background-color: #f8f9fa;
+    border-left: 1px solid var(--border-color);
+}
+
+.scrapbook-header {
+    padding: 0.75rem 1rem;
+    font-weight: 600;
+    font-size: 0.95rem;
+    border-bottom: 1px solid var(--border-color);
+    background: #fff;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.item-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+}
+
+.scrapbook-list {
+    flex: 1;
+    padding: 1rem;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.empty-scrapbook {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-top: 3rem;
+    font-size: 0.9rem;
+}
+
+.scrap-image {
+    width: 100%;
+    height: auto;
+    border-radius: 4px;
+    border: 1px solid #f1f3f5;
+    display: block;
+}
+
+.scrap-citation {
+    font-size: 0.7rem;
+    color: var(--text-secondary);
+    margin-top: 4px;
+    text-align: right;
+    font-style: italic;
+}
+
+.scrap-comment {
+    font-size: 0.9rem;
+    color: var(--text-primary);
+    outline: none;
+    min-height: 1.2rem;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+}
+
+.scrap-comment:focus {
+    background-color: #f8f9fa;
+}
+
+.scrap-comment:empty:before {
+    content: attr(data-placeholder);
+    color: #adb5bd;
+}
+
+.scrap-heading {
+    font-weight: 700;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.scrap-text {
+    font-size: 0.95rem;
+    line-height: 1.5;
+}
+
+.scrapbook-footer {
+    padding: 0.75rem 1rem;
+    border-top: 1px solid var(--border-color);
+    background: #fff;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.export-btn {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 8px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    color: var(--text-primary);
+    background-color: #f8f9fa;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s;
+}
+
+.export-btn:hover {
+    background-color: #f1f3f5;
+    border-color: #ced4da;
+    transform: translateY(-1px);
+}
+
+.export-btn:active {
+    transform: translateY(0);
+}
+
+.divider {
+    width: 1px;
+    height: 24px;
+    background-color: var(--border-color);
+}
+
+.scrap-block {
+    position: relative;
+    background: white;
+    border-radius: 8px;
+    padding: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: box-shadow 0.2s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border: 1px solid #eee;
+}
+
+.scrap-block:hover {
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.scrap-actions {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    z-index: 10;
+}
+
+.scrap-block:hover .scrap-actions {
+    opacity: 1;
+}
+
+.delete-btn {
+    /* Fixed Positioning: Bottom Right */
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    top: auto;
+
+    /* Styling */
+    background: rgba(255, 255, 255, 0.95);
+    border: 1px solid #ffc9c9;
+    color: #fa5252;
+    padding: 6px;
+    border-radius: 6px;
+    cursor: pointer;
+    z-index: 999;
+
+    /* Layout */
+    display: flex;
+    width: 28px;
+    height: 28px;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s;
+}
+
+.delete-btn:hover {
+    background: #fff5f5;
+    border-color: #fa5252;
+    color: #c92a2a;
+    transform: scale(1.05);
+}
+
+
+/* Header Tabs & Actions */
+.header-tab {
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+}
+
+.header-tab:hover {
+    background-color: #f1f3f5;
+    color: var(--text-primary);
+}
+
+.header-tab.active {
+    background-color: #e7f5ff;
+    color: #1971c2;
+    font-weight: 600;
+}
+
+.refresh-btn {
+    color: var(--text-secondary);
+    padding: 6px;
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+    background-color: #f1f3f5;
+    color: #1971c2;
+    transform: rotate(180deg);
+}
+
+.refresh-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Archive Nav */
+.archive-nav {
+    padding: 0.5rem 1rem;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid var(--border-color);
+    font-size: 0.85rem;
+}
+
+.tag-breadcrumb {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.back-link {
+    cursor: pointer;
+    color: #1971c2;
+    text-decoration: underline;
+}
+
+.separator {
+    color: var(--text-secondary);
+}
+
+.current-tag {
+    font-weight: 600;
+}
+
+/* Folder Grid */
+.folder-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 1rem;
+    padding: 0.5rem;
+}
+
+.folder-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    cursor: pointer;
+    padding: 1rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.folder-item:hover {
+    background-color: #e7f5ff;
+}
+
+.folder-icon {
+    color: #fab005;
+    /* Folder yellow */
+    margin-bottom: 0.5rem;
+}
+
+.folder-name {
+    font-size: 0.9rem;
+    font-weight: 500;
+    text-align: center;
+    word-break: break-all;
+}
+
+.folder-count {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+/* Tag Management in ScrapBlock */
+.scrap-tags {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.tags-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+}
+
+.scrap-tag {
+    background-color: #e9ecef;
+    color: var(--text-secondary);
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.remove-tag {
+    cursor: pointer;
+    font-size: 1rem;
+    line-height: 0.5;
+    padding: 0 2px;
+    color: #adb5bd;
+}
+
+.remove-tag:hover {
+    color: #e03131;
+}
+
+.add-tag-btn {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.75rem;
+    color: #1971c2;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.add-tag-btn:hover {
+    background-color: #e7f5ff;
+}
+
+.add-tag-input {
+    display: flex;
+    gap: 4px;
+}
+
+.add-tag-input input {
+    font-size: 0.75rem;
+    padding: 2px 4px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    width: 80px;
+}
+
+.add-tag-input button {
+    font-size: 0.75rem;
+    padding: 2px 6px;
+    background-color: #1971c2;
+    color: white;
+    border-radius: 3px;
+}
+
+.archived-badge {
+    font-size: 0.7rem;
+    color: #868e96;
+    background-color: #f1f3f5;
+    padding: 2px 6px;
+    border-radius: 4px;
+    border: 1px solid #dee2e6;
+}
+
+/* Action buttons override */
+.action-btn {
+    padding: 4px;
+    border-radius: 4px;
+    color: #adb5bd;
+    margin-right: 4px;
+}
+
+.action-btn:hover {
+    background-color: #e7f5ff;
+    color: #1971c2;
+}

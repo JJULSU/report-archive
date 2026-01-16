@@ -1,0 +1,51 @@
+.split-layout {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    overflow: hidden;
+}
+
+.pane {
+    height: 100%;
+    overflow: auto;
+    background-color: var(--panel-bg);
+    position: relative;
+}
+
+.left-pane {
+    border-right: 1px solid var(--border-color);
+}
+
+.right-pane {
+    border-left: 1px solid var(--border-color);
+}
+
+.center-pane {
+    background-color: #e3e5e7;
+    /* Slightly darker to distinguish viewer area */
+    display: flex;
+    flex-direction: column;
+}
+
+.resizer {
+    width: 5px;
+    cursor: col-resize;
+    background-color: transparent;
+    transition: background-color 0.2s;
+    z-index: 10;
+    margin: 0 -2px;
+    /* Overlap slightly for easier grabbing */
+    position: relative;
+}
+
+.resizer:hover,
+.resizer:active {
+    background-color: var(--primary-color);
+}
+
+.placeholder {
+    padding: 2rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-weight: 500;
+}
