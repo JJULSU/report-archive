@@ -65,7 +65,7 @@ let dbPromise: Promise<IDBPDatabase<ReportInsightDB>>;
 export const initDB = () => {
     if (!dbPromise) {
         dbPromise = openDB<ReportInsightDB>(DB_NAME, DB_VERSION, {
-            upgrade(db, oldVersion, newVersion, transaction) {
+            upgrade(db, oldVersion, _newVersion, transaction) {
                 if (!db.objectStoreNames.contains('files')) {
                     const fileStore = db.createObjectStore('files', { keyPath: 'id' });
                     fileStore.createIndex('by-date', 'createdAt');

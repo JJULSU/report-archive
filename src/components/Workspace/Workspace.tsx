@@ -9,9 +9,10 @@ import './Workspace.css';
 
 interface WorkspaceProps {
     activeFileId: string | null;
+    onNextFile?: () => void;
 }
 
-export function Workspace({ activeFileId }: WorkspaceProps) {
+export function Workspace({ activeFileId, onNextFile }: WorkspaceProps) {
     const [pageNumber, setPageNumber] = useState(1);
     const [numPages, setNumPages] = useState(0);
     const [scale, setScale] = useState(1.2); // Default scale 120%
@@ -45,7 +46,7 @@ export function Workspace({ activeFileId }: WorkspaceProps) {
 
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [activeFileId, pageNumber, numPages]); // Depend on pageNumber to update correctly
+    }, [activeFileId, pageNumber, numPages, onNextFile]); // Depend on pageNumber to update correctly
 
     const handleZoom = (delta: number) => {
         setScale(prev => Math.max(0.2, Math.min(3.0, prev + delta)));
@@ -54,6 +55,8 @@ export function Workspace({ activeFileId }: WorkspaceProps) {
     const handlePageChange = (newPage: number) => {
         if (newPage >= 1 && newPage <= numPages) {
             setPageNumber(newPage);
+        } else if (newPage > numPages && onNextFile) {
+            onNextFile();
         }
     };
 

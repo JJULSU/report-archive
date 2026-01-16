@@ -39,8 +39,7 @@ export const copyToClipboard = async (items: any[]) => {
 
 export const exportToPdf = async (items: any[]) => {
     // A4 Size at 96 DPI: 794px x 1123px
-    const PAGE_WIDTH = 794;
-    const PAGE_HEIGHT = 1123; // Height for aspect ratio reference
+
     const MARGIN = 40;
 
     // Create a container that exactly matches A4 width/aspect in a hidden way but rendered
@@ -141,7 +140,7 @@ export const exportToPdf = async (items: any[]) => {
             const images = container.getElementsByTagName('img');
             await Promise.all(Array.from(images).map(img => {
                 if (img.complete) return Promise.resolve();
-                return new Promise((resolve, reject) => {
+                return new Promise((resolve, _reject) => {
                     img.onload = resolve;
                     img.onerror = resolve; // Continue even if error
                 });
