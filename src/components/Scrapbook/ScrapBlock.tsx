@@ -121,7 +121,8 @@ export function ScrapBlock({ item, isArchived, existingTags = [], onDelete, onUp
                 className="scrap-comment"
                 contentEditable
                 data-placeholder="Add a comment..."
-                onBlur={(e) => onUpdate && onUpdate({ ...item, comment: e.currentTarget.textContent })}
+                onKeyDown={(e) => e.stopPropagation()}
+                onBlur={(e) => onUpdate && onUpdate({ ...item, comment: e.currentTarget.innerText })}
                 suppressContentEditableWarning
             >
                 {item.comment}

@@ -19,7 +19,7 @@ export const copyToClipboard = async (items: any[]) => {
         } else if (item.type === 'text') {
             htmlContent += `<p>${item.content}</p>`;
         } else if (item.type === 'image') {
-            htmlContent += `<img src="${item.content}" style="max-width: 100%; border: 1px solid #ddd; border-radius: 4px;" /><br/>`;
+            htmlContent += `<p><em>(Image)</em></p>`;
             if (item.meta?.citation) {
                 htmlContent += `<div style="font-size: 0.8em; color: gray; margin-top: 4px; font-style: italic;">${item.meta.citation}</div>`;
             }
