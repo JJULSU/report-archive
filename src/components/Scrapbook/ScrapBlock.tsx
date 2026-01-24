@@ -1,6 +1,8 @@
-import { Trash2, Highlighter, Plus } from 'lucide-react';
+import { Trash2, Highlighter, Plus, Send } from 'lucide-react';
 import './Scrapbook.css';
 import { useState } from 'react';
+import { sendToTelegram } from '../../utils/telegram';
+import { dataUrlToBlob, flattenImage } from '../../utils/imageUtils';
 
 interface ScrapItem {
     id: string;
@@ -33,6 +35,7 @@ interface ScrapBlockProps {
 export function ScrapBlock({ item, isArchived, existingTags = [], onDelete, onUpdate, onOpenHighlight }: ScrapBlockProps) {
     const [isAddingTag, setIsAddingTag] = useState(false);
     const [tagInput, setTagInput] = useState('');
+    const [isSending, setIsSending] = useState(false);
 
     const handleAddTag = () => {
         if (!tagInput.trim() || !onUpdate) return;
@@ -54,17 +57,51 @@ export function ScrapBlock({ item, isArchived, existingTags = [], onDelete, onUp
         onUpdate({ ...item, tags: newTags });
     };
 
+    const handleSendTelegram = async () => {
+        if (item.type !== 'image') return;
+        if (!confirm("Send this image to Telegram?")) return;
+
+        setIsSending(true);
+        try {
+            let finalContent = item.content;
+            if (item.meta?.highlights && item.meta.highlights.length > 0) {
+                finalContent = await flattenImage(item.content, item.meta.highlights);
+            }
+
+            const blob = await dataUrlToBlob(finalContent);
+            await sendToTelegram(blob, item.comment, item.tags);
+            alert("Sent to Telegram successfully!");
+        } catch (e: any) {
+            console.error(e);
+            alert(e.message || "Failed to send to Telegram");
+        } finally {
+            setIsSending(false);
+        }
+    };
+
     return (
         <div className={`scrap-block ${isArchived ? 'archived' : ''}`} style={{ opacity: isArchived ? 0.8 : 1 }}>
             <div className="scrap-actions">
-                {item.type === 'image' && onOpenHighlight && (
-                    <button
-                        className="action-btn"
-                        onClick={onOpenHighlight}
-                        title="Edit / Highlight"
-                    >
-                        <Highlighter size={14} />
-                    </button>
+                {item.type === 'image' && (
+                    <>
+                        <button
+                            className="action-btn"
+                            onClick={handleSendTelegram}
+                            title="Send to Telegram"
+                            disabled={isSending}
+                        >
+                            <Send size={14} />
+                        </button>
+                        {onOpenHighlight && (
+                            <button
+                                className="action-btn"
+                                onClick={onOpenHighlight}
+                                title="Edit / Highlight"
+                            >
+                                <Highlighter size={14} />
+                            </button>
+                        )}
+                    </>
                 )}
             </div>
 
@@ -87,6 +124,7 @@ export function ScrapBlock({ item, isArchived, existingTags = [], onDelete, onUp
                 </div>
             )}
 
+            {/* Same as before... */}
             {item.type === 'image' && (
                 <div
                     className="scrap-image-container"

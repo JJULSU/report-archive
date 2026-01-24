@@ -1,11 +1,11 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Copy, FileDown, RotateCcw, Folder, Save } from 'lucide-react';
+import { Copy, FileDown, RotateCcw, Folder, Save, Settings } from 'lucide-react';
 import { getAllScrapItems, deleteScrapItem, updateScrapItem } from '../../lib/db';
 import { ScrapBlock } from './ScrapBlock';
 import { copyToClipboard, exportToPdf } from '../../utils/export';
 import { ScrapHighlightModal } from './ScrapHighlightModal';
-// import { GoogleDriveService } from '../../lib/googleDrive'; // Removed unused import to fix build
-import { flattenImage, dataUrlToBlob } from '../../utils/imageUtils'; // Import util
+import { flattenImage, dataUrlToBlob } from '../../utils/imageUtils';
+import { TelegramSettingsModal } from './TelegramSettingsModal';
 import './Scrapbook.css';
 import './Footer.css';
 
@@ -14,6 +14,7 @@ export function Scrapbook() {
     const [editingItem, setEditingItem] = useState<any>(null);
     const [viewMode, setViewMode] = useState<'current' | 'archive'>('current');
     const [selectedTag, setSelectedTag] = useState<string | null>(null);
+    const [showTelegramSettings, setShowTelegramSettings] = useState(false);
 
     const loadItems = async () => {
         const storedItems = await getAllScrapItems();
@@ -141,13 +142,10 @@ export function Scrapbook() {
         }
     };
 
-    // Drive save removed per user request
-
     const handleRefresh = async () => {
         if (currentItems.length === 0) return;
         if (!window.confirm(`Delete ALL ${currentItems.length} items from current view? This cannot be undone.`)) return;
 
-        // Delete all current items
         await Promise.all(currentItems.map(item => deleteScrapItem(item.id)));
         loadItems();
     };
@@ -192,7 +190,10 @@ export function Scrapbook() {
                 </div>
 
                 {viewMode === 'current' && (
-                    <div className="header-actions">
+                    <div className="header-actions" style={{ display: 'flex', gap: '4px' }}>
+                        <button className="refresh-btn" onClick={() => setShowTelegramSettings(true)} title="Telegram Settings">
+                            <Settings size={16} />
+                        </button>
                         <button className="refresh-btn" onClick={handleSave} title="Save to Disk & Archive" disabled={currentItems.length === 0}>
                             <Save size={16} />
                         </button>
@@ -241,7 +242,7 @@ export function Scrapbook() {
                         ))}
                     </div>
                 ) : (
-                    // Items List (Current or Archived-Filtered)
+                    // Items List 
                     displayItems.map(item => (
                         <ScrapBlock
                             key={item.id}
@@ -285,6 +286,11 @@ export function Scrapbook() {
                     }}
                     onClose={() => setEditingItem(null)}
                 />
+            )}
+
+            {/* Telegram Settings Modal */}
+            {showTelegramSettings && (
+                <TelegramSettingsModal onClose={() => setShowTelegramSettings(false)} />
             )}
         </div>
     );

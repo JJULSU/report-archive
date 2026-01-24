@@ -337,7 +337,7 @@ export function PdfViewer({ fileId, scale, pageNumber, onLoadSuccess, onZoom, on
     }
 
     return (
-        <div className="pdf-canvas-wrapper" style={{ overflow: 'auto', flex: 1, display: 'flex', justifyContent: 'center', background: '#e5e5e5', padding: '20px', position: 'relative' }}>
+        <div className="pdf-canvas-wrapper" style={{ display: 'flex', justifyContent: 'center', position: 'relative' }}>
             {/* Navigation Click Zones */}
             <div
                 style={{ position: 'absolute', top: 0, left: 0, width: '150px', height: '100%', cursor: 'pointer', zIndex: 10 }}
