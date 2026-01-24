@@ -63,6 +63,7 @@
     padding: 4px;
     border-radius: 4px;
     transition: background-color 0.2s;
+    white-space: pre-wrap;
 }
 
 .scrap-comment:focus {
@@ -84,6 +85,7 @@
 .scrap-text {
     font-size: 0.95rem;
     line-height: 1.5;
+    white-space: pre-wrap;
 }
 
 .scrapbook-footer {

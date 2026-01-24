@@ -17,14 +17,14 @@ export const copyToClipboard = async (items: any[]) => {
         if (item.type === 'heading') {
             htmlContent += `<h2 style="font-size: 1.5em; font-weight: bold;">${item.content}</h2>`;
         } else if (item.type === 'text') {
-            htmlContent += `<p>${item.content}</p>`;
+            htmlContent += `<p style="white-space: pre-wrap;">${item.content.replace(/\n/g, '<br>')}</p>`;
         } else if (item.type === 'image') {
             htmlContent += `<p><em>(Image)</em></p>`;
             if (item.meta?.citation) {
                 htmlContent += `<div style="font-size: 0.8em; color: gray; margin-top: 4px; font-style: italic;">${item.meta.citation}</div>`;
             }
             if (item.comment) {
-                htmlContent += `<p style="margin-top: 8px;">${item.comment}</p>`;
+                htmlContent += `<p style="margin-top: 8px; white-space: pre-wrap;">${item.comment.replace(/\n/g, '<br>')}</p>`;
             }
         }
         htmlContent += '</div>';
@@ -132,7 +132,7 @@ export const exportToPdf = async (items: any[]) => {
 
                     // Comment
                     if (item.comment) {
-                        html += `<div style="font-size: 14px; color: #333; line-height: 1.5; flex-shrink: 0;">${escapeHtml(item.comment)}</div>`;
+                        html += `<div style="font-size: 14px; color: #333; line-height: 1.5; flex-shrink: 0; white-space: pre-wrap;">${escapeHtml(item.comment)}</div>`;
                     }
                 } else if (item.type === 'text') {
                     html += `<div style="font-size: 14px; color: #333; white-space: pre-wrap;">${escapeHtml(item.content)}</div>`;
